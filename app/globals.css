@@ -1,0 +1,54 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap");
+@import "tailwindcss";
+
+:root {
+  /* Ambient glass -- warm plum-black, quiet chrome. The user's own accent
+     color is the only thing that's meant to glow. */
+  --bg-base: #1a1420;
+  --bg-surface: #241c2c;
+  --bg-surface-2: #2d2436;
+
+  --text-primary: #e9e3ee;
+  --text-secondary: #8c7d99;
+  --text-muted: #6e6178;
+
+  --border: #342a3f;
+  --border-strong: #453a52;
+
+  --danger: #f2879a;
+  --success: #7fd9ae;
+
+  --font-voice: "Fraunces", Georgia, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, Helvetica, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Glow -- the signature element. Applied only to the user's own accent
+   color (never to platform chrome), via inline style setting --glow-color. */
+.glow {
+  box-shadow: 0 0 0 1px var(--glow-color, transparent), 0 0 16px 1px color-mix(in srgb, var(--glow-color, transparent) 45%, transparent);
+}
+
+@keyframes fall {
+  from { transform: translateY(-10vh) translateX(0); }
+  to { transform: translateY(110vh) translateX(var(--drift, 0px)); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}

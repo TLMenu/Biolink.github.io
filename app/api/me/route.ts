@@ -6,11 +6,11 @@ export async function GET() {
   const userId = await getCurrentUserId();
   if (!userId) return NextResponse.json({ user: null });
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) return NextResponse.json({ user: null });
 
-  const profile = getProfileByUserId(userId);
-  const links = profile ? getLinksByProfileId(profile.id) : [];
+  const profile = await getProfileByUserId(userId);
+  const links = profile ? await getLinksByProfileId(profile.id) : [];
 
   return NextResponse.json({
     user: { id: user.id, username: user.username, email: user.email },

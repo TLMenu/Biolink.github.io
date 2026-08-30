@@ -28,15 +28,15 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-  if (getUserByUsername(username)) {
+  if (await getUserByUsername(username)) {
     return NextResponse.json({ error: "Username bereits vergeben." }, { status: 409 });
   }
-  if (getUserByEmail(email)) {
+  if (await getUserByEmail(email)) {
     return NextResponse.json({ error: "E-Mail bereits registriert." }, { status: 409 });
   }
 
   const passwordHash = await hashPassword(password);
-  const user = createUser(username, email, passwordHash);
+  const user = await createUser(username, email, passwordHash);
   await setSessionCookie(user.id);
 
   return NextResponse.json({ ok: true, username: user.username });

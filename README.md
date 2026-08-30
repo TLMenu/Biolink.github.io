@@ -1,2 +1,2 @@
-# telelumi.github.io
-Profile Website made by telelumi
+# Profile Website
+made by telelumi

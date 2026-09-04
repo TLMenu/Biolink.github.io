@@ -225,13 +225,14 @@ export default function DashboardPage() {
     toastTimeoutRef.current = setTimeout(() => setToastMsg(null), 2600);
   };
 
-  // 1. Load initial user & profile from API
+  // 1. Load initial user & profile from API with strict no-cache check
   useEffect(() => {
-    fetch("/api/me")
+    fetch("/api/me", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
-        if (!data.user) {
-          router.push("/login");
+        if (!data?.user) {
+          localStorage.removeItem("biolink_profile_config_v1");
+          window.location.replace("/login");
           return;
         }
 
@@ -278,9 +279,31 @@ export default function DashboardPage() {
         setLoading(false);
       })
       .catch(() => {
-        setLoading(false);
+        window.location.replace("/login");
       });
   }, [router]);
+
+  // Anti-Back-Button / bfcache protection
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        fetch("/api/me", { cache: "no-store" })
+          .then((r) => r.json())
+          .then((data) => {
+            if (!data?.user) {
+              localStorage.removeItem("biolink_profile_config_v1");
+              window.location.replace("/login");
+            }
+          })
+          .catch(() => {
+            window.location.replace("/login");
+          });
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
 
   // Helper updater
   const updateField = <K extends keyof ProfileState>(key: K, val: ProfileState[K]) => {
@@ -570,9 +593,14 @@ export default function DashboardPage() {
 
   // Logout
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore
+    }
+    localStorage.removeItem("biolink_profile_config_v1");
+    sessionStorage.clear();
+    window.location.replace("/login");
   };
 
   // Link actions

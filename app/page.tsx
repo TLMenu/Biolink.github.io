@@ -95,7 +95,7 @@ export default function Home() {
                 <div className="preview-avatar-inner" />
               </div>
               <p className="preview-name">deinname</p>
-              <p className="preview-handle">biolink.gg/deinname</p>
+              <p className="preview-handle">mybiolinkpage.de/deinname</p>
               <p className="preview-bio">✦ dein vibe, deine regeln ✦</p>
               <div className="preview-links">
                 <div className="preview-link active">Discord</div>

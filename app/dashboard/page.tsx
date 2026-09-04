@@ -516,7 +516,7 @@ export default function DashboardPage() {
 
   // Copy handle
   const handleCopy = () => {
-    const url = typeof window !== "undefined" ? `${window.location.origin}/${state.handle}` : `biolink.gg/${state.handle}`;
+    const url = typeof window !== "undefined" ? `${window.location.origin}/${state.handle}` : `https://mybiolinkpage.de/${state.handle}`;
     if (navigator.clipboard) {
       navigator.clipboard
         .writeText(url)
@@ -645,7 +645,7 @@ export default function DashboardPage() {
         </Link>
 
         <div className="dash-handle-pill">
-          <span>biolink.gg/{state.handle}</span>
+          <span>mybiolinkpage.de/{state.handle}</span>
           <button type="button" onClick={handleCopy} title="Link kopieren">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="9" y="9" width="12" height="12" rx="2" />
@@ -875,7 +875,7 @@ export default function DashboardPage() {
                 <div className="dash-field">
                   <label htmlFor="f-handle">Benutzername</label>
                   <div className="dash-handle-input">
-                    <span className="prefix">biolink.gg/</span>
+                    <span className="prefix">mybiolinkpage.de/</span>
                     <input
                       type="text"
                       id="f-handle"
@@ -1661,7 +1661,7 @@ export default function DashboardPage() {
                   </span>
                 </div>
 
-                <div className="lp-handle">biolink.gg/{state.handle || "deinname"}</div>
+                <div className="lp-handle">mybiolinkpage.de/{state.handle || "deinname"}</div>
 
                 <div className="lp-bio">
                   {state.typewriter ? (

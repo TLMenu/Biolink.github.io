@@ -24,6 +24,7 @@ export type Profile = {
   cursorEffect: string;
   customCss: string | null;
   views: number;
+  badges: string | null;
 };
 
 export type Link = {
@@ -124,6 +125,8 @@ type ProfileUpdate = Partial<{
   audioAutoplay: boolean;
   cursorEffect: string;
   customCss: string;
+  badges: string;
+  views: number;
 }>;
 
 export async function updateProfile(userId: string, data: ProfileUpdate) {

@@ -209,6 +209,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("profil");
   const [state, setState] = useState<ProfileState>(defaultProfileState);
+  const [isTelelumi, setIsTelelumi] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(true);
@@ -237,6 +238,9 @@ export default function DashboardPage() {
         }
 
         const username = data.user.username;
+        const isTele = (username || "").toLowerCase() === "telelumi";
+        setIsTelelumi(isTele);
+
         const p = data.profile || {};
         const remoteLinks: LinkItem[] = (data.links || []).map((l: { label: string; url: string; icon?: string }, i: number) => ({
           id: i + 1,
@@ -254,6 +258,20 @@ export default function DashboardPage() {
           // ignore
         }
 
+        // Badges: strictly restricted to telelumi
+        let remoteBadges = { verified: false, og: false, premium: false };
+        if (isTele) {
+          if (p.badges) {
+            try {
+              remoteBadges = typeof p.badges === "string" ? JSON.parse(p.badges) : p.badges;
+            } catch {
+              // ignore
+            }
+          } else if (localConfig.badges) {
+            remoteBadges = localConfig.badges;
+          }
+        }
+
         setState((prev) => {
           return {
             ...prev,
@@ -262,6 +280,7 @@ export default function DashboardPage() {
             handle: username,
             bio: p.bio !== null && p.bio !== undefined ? p.bio : prev.bio,
             avatar: p.avatarUrl || prev.avatar,
+            badges: isTele ? remoteBadges : { verified: false, og: false, premium: false },
             bgType: (p.backgroundType as ProfileState["bgType"]) || prev.bgType,
             bgColor: p.backgroundColor || prev.bgColor,
             bgImage: p.backgroundType === "image" ? p.backgroundUrl || "" : prev.bgImage,
@@ -509,6 +528,8 @@ export default function DashboardPage() {
       audioAutoplay: state.audioAutoplay,
       cursorEffect: state.particles,
       customCss: state.customCss,
+      badges: isTelelumi ? state.badges : { verified: false, og: false, premium: false },
+      views: isTelelumi ? state.viewCount : undefined,
       links: state.links.map((l) => ({
         label: l.label,
         url: l.url,
@@ -937,48 +958,59 @@ export default function DashboardPage() {
                   Badges
                 </label>
 
-                <label className="dash-badge-check">
-                  <input
-                    type="checkbox"
-                    checked={state.badges.verified}
-                    onChange={(e) => updateBadge("verified", e.target.checked)}
-                  />
-                  <span className="swatch-icon">
-                    <svg viewBox="0 0 24 24" fill="#3ba7ff" width={20} height={20}>
-                      <path d="M12 2l2.4 2.1 3.1-.5 1 3 2.9 1.4-.6 3.1 1.9 2.5-1.9 2.5.6 3.1-2.9 1.4-1 3-3.1-.5L12 22l-2.4-2.1-3.1.5-1-3-2.9-1.4.6-3.1L1.3 12l1.9-2.5-.6-3.1L5.5 5l1-3 3.1.5z" />
-                      <path d="M8.5 12l2.3 2.3L16 9" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                  <span className="lbl">Verifiziert</span>
-                </label>
+                {isTelelumi ? (
+                  <>
+                    <label className="dash-badge-check">
+                      <input
+                        type="checkbox"
+                        checked={state.badges.verified}
+                        onChange={(e) => updateBadge("verified", e.target.checked)}
+                      />
+                      <span className="swatch-icon">
+                        <svg viewBox="0 0 24 24" fill="#3ba7ff" width={20} height={20}>
+                          <path d="M12 2l2.4 2.1 3.1-.5 1 3 2.9 1.4-.6 3.1 1.9 2.5-1.9 2.5.6 3.1-2.9 1.4-1 3-3.1-.5L12 22l-2.4-2.1-3.1.5-1-3-2.9-1.4.6-3.1L1.3 12l1.9-2.5-.6-3.1L5.5 5l1-3 3.1.5z" />
+                          <path d="M8.5 12l2.3 2.3L16 9" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                      <span className="lbl">Verifiziert</span>
+                    </label>
 
-                <label className="dash-badge-check">
-                  <input
-                    type="checkbox"
-                    checked={state.badges.og}
-                    onChange={(e) => updateBadge("og", e.target.checked)}
-                  />
-                  <span className="swatch-icon">
-                    <svg viewBox="0 0 24 24" fill="#f59e0b" width={20} height={20}>
-                      <path d="M12 2l2.9 6.3L22 9l-5 5 1.3 7L12 17.8 5.7 21 7 14 2 9l7.1-.7z" />
-                    </svg>
-                  </span>
-                  <span className="lbl">OG</span>
-                </label>
+                    <label className="dash-badge-check">
+                      <input
+                        type="checkbox"
+                        checked={state.badges.og}
+                        onChange={(e) => updateBadge("og", e.target.checked)}
+                      />
+                      <span className="swatch-icon">
+                        <svg viewBox="0 0 24 24" fill="#f59e0b" width={20} height={20}>
+                          <path d="M12 2l2.9 6.3L22 9l-5 5 1.3 7L12 17.8 5.7 21 7 14 2 9l7.1-.7z" />
+                        </svg>
+                      </span>
+                      <span className="lbl">OG</span>
+                    </label>
 
-                <label className="dash-badge-check">
-                  <input
-                    type="checkbox"
-                    checked={state.badges.premium}
-                    onChange={(e) => updateBadge("premium", e.target.checked)}
-                  />
-                  <span className="swatch-icon">
-                    <svg viewBox="0 0 24 24" fill="#ec4899" width={20} height={20}>
-                      <path d="M3 8l4 3 5-6 5 6 4-3-2 11H5z" />
-                    </svg>
-                  </span>
-                  <span className="lbl">Premium</span>
-                </label>
+                    <label className="dash-badge-check">
+                      <input
+                        type="checkbox"
+                        checked={state.badges.premium}
+                        onChange={(e) => updateBadge("premium", e.target.checked)}
+                      />
+                      <span className="swatch-icon">
+                        <svg viewBox="0 0 24 24" fill="#ec4899" width={20} height={20}>
+                          <path d="M3 8l4 3 5-6 5 6 4-3-2 11H5z" />
+                        </svg>
+                      </span>
+                      <span className="lbl">Premium</span>
+                    </label>
+                  </>
+                ) : (
+                  <div style={{ padding: "12px 14px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)", color: "#8a8f9d", fontSize: "0.82rem" }}>
+                    🔒 <strong>Auszeichnungen gesperrt</strong>
+                    <div style={{ marginTop: 4, fontSize: "0.76rem", color: "#656a7b" }}>
+                      Badges werden exklusiv vom Administrator vergeben und können nicht manuell aktiviert werden.
+                    </div>
+                  </div>
+                )}
 
                 <hr className="dash-sep" />
 
@@ -1561,14 +1593,21 @@ export default function DashboardPage() {
 
                 <div className="dash-field" style={{ marginTop: 14 }}>
                   <label htmlFor="f-viewcount">Aufrufe (Statistik)</label>
-                  <input
-                    type="number"
-                    id="f-viewcount"
-                    className="dash-input"
-                    min={0}
-                    value={state.viewCount}
-                    onChange={(e) => updateField("viewCount", Number(e.target.value))}
-                  />
+                  {isTelelumi ? (
+                    <input
+                      type="number"
+                      id="f-viewcount"
+                      className="dash-input"
+                      min={0}
+                      value={state.viewCount}
+                      onChange={(e) => updateField("viewCount", Number(e.target.value))}
+                    />
+                  ) : (
+                    <div style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)", color: "#b0b4c3", fontSize: "0.88rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span>{(state.viewCount || 0).toLocaleString("de-DE")} Aufrufe</span>
+                      <span style={{ fontSize: "0.74rem", color: "#686d80" }}>Automatisch & geschützt gezählt</span>
+                    </div>
+                  )}
                 </div>
 
                 <hr className="dash-sep" />
@@ -1669,24 +1708,26 @@ export default function DashboardPage() {
 
                 <div className="lp-name-row">
                   <span className="lp-name">{state.name || "deinname"}</span>
-                  <span style={{ display: "inline-flex", gap: 4 }}>
-                    {state.badges.verified && (
-                      <svg className="lp-badge" viewBox="0 0 24 24" fill="#3ba7ff">
-                        <path d="M12 2l2.4 2.1 3.1-.5 1 3 2.9 1.4-.6 3.1 1.9 2.5-1.9 2.5.6 3.1-2.9 1.4-1 3-3.1-.5L12 22l-2.4-2.1-3.1.5-1-3-2.9-1.4.6-3.1L1.3 12l1.9-2.5-.6-3.1L5.5 5l1-3 3.1.5z" />
-                        <path d="M8.5 12l2.3 2.3L16 9" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                    {state.badges.og && (
-                      <svg className="lp-badge" viewBox="0 0 24 24" fill="#f59e0b">
-                        <path d="M12 2l2.9 6.3L22 9l-5 5 1.3 7L12 17.8 5.7 21 7 14 2 9l7.1-.7z" />
-                      </svg>
-                    )}
-                    {state.badges.premium && (
-                      <svg className="lp-badge" viewBox="0 0 24 24" fill="#ec4899">
-                        <path d="M3 8l4 3 5-6 5 6 4-3-2 11H5z" />
-                      </svg>
-                    )}
-                  </span>
+                  {isTelelumi && (
+                    <span style={{ display: "inline-flex", gap: 4 }}>
+                      {state.badges.verified && (
+                        <svg className="lp-badge" viewBox="0 0 24 24" fill="#3ba7ff">
+                          <path d="M12 2l2.4 2.1 3.1-.5 1 3 2.9 1.4-.6 3.1 1.9 2.5-1.9 2.5.6 3.1-2.9 1.4-1 3-3.1-.5L12 22l-2.4-2.1-3.1.5-1-3-2.9-1.4.6-3.1L1.3 12l1.9-2.5-.6-3.1L5.5 5l1-3 3.1.5z" />
+                          <path d="M8.5 12l2.3 2.3L16 9" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                      {state.badges.og && (
+                        <svg className="lp-badge" viewBox="0 0 24 24" fill="#f59e0b">
+                          <path d="M12 2l2.9 6.3L22 9l-5 5 1.3 7L12 17.8 5.7 21 7 14 2 9l7.1-.7z" />
+                        </svg>
+                      )}
+                      {state.badges.premium && (
+                        <svg className="lp-badge" viewBox="0 0 24 24" fill="#ec4899">
+                          <path d="M3 8l4 3 5-6 5 6 4-3-2 11H5z" />
+                        </svg>
+                      )}
+                    </span>
+                  )}
                 </div>
 
                 <div className="lp-handle">mybiolinkpage.de/{state.handle || "deinname"}</div>

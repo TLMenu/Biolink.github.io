@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUserId } from "@/lib/auth";
-import { getProfileByUserId, updateProfile, replaceLinks } from "@/lib/models";
+import { getUserById, getProfileByUserId, updateProfile, replaceLinks } from "@/lib/models";
 
 export async function PUT(req: NextRequest) {
   const userId = await getCurrentUserId();
   if (!userId) {
     return NextResponse.json({ error: "Nicht eingeloggt." }, { status: 401 });
   }
+
+  const user = await getUserById(userId);
+  if (!user) {
+    return NextResponse.json({ error: "Benutzer nicht gefunden." }, { status: 404 });
+  }
+
+  const isTelelumi = user.username.toLowerCase() === "telelumi";
 
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Ungültige Daten." }, { status: 400 });
@@ -24,9 +31,11 @@ export async function PUT(req: NextRequest) {
     cursorEffect,
     customCss,
     links,
+    badges,
+    views,
   } = body;
 
-  await updateProfile(userId, {
+  const updateData: Parameters<typeof updateProfile>[1] = {
     displayName,
     bio,
     avatarUrl,
@@ -38,7 +47,19 @@ export async function PUT(req: NextRequest) {
     audioAutoplay,
     cursorEffect,
     customCss,
-  });
+  };
+
+  // Only user "telelumi" can update badges
+  if (isTelelumi && badges !== undefined) {
+    updateData.badges = typeof badges === "string" ? badges : JSON.stringify(badges);
+  }
+
+  // Only user "telelumi" can manually adjust views
+  if (isTelelumi && typeof views === "number") {
+    updateData.views = Math.max(0, Math.floor(views));
+  }
+
+  await updateProfile(userId, updateData);
 
   const profile = await getProfileByUserId(userId);
   if (profile && Array.isArray(links)) {

@@ -3,10 +3,11 @@ import {
   getUserByUsername,
   getProfileByUserId,
   getLinksByProfileId,
-  incrementProfileViews,
 } from "@/lib/models";
+import { getCurrentUserId } from "@/lib/auth";
 import ParticleEffect from "@/components/ParticleEffect";
 import AudioPlayer from "@/components/AudioPlayer";
+import ViewTracker from "@/components/ViewTracker";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,20 @@ export default async function ProfilePage({
   if (!profile) notFound();
 
   const links = await getLinksByProfileId(profile.id);
-  await incrementProfileViews(profile.id);
+
+  // Check if the current viewer is the profile owner
+  const currentUserId = await getCurrentUserId();
+  const isOwner = !!(currentUserId && currentUserId === user.id);
+
+  // Badges logic: strictly restricted to "telelumi"
+  let badges = { verified: false, og: false, premium: false };
+  if (profile.badges && user.username.toLowerCase() === "telelumi") {
+    try {
+      badges = typeof profile.badges === "string" ? JSON.parse(profile.badges) : profile.badges;
+    } catch {
+      // ignore
+    }
+  }
 
   const bgStyle: React.CSSProperties =
     profile.backgroundType === "color"
@@ -83,7 +97,29 @@ export default async function ProfilePage({
           </div>
         )}
 
-        <h1 className="text-xl font-bold">{profile.displayName || user.username}</h1>
+        <div className="flex items-center justify-center gap-2 mb-1">
+          <h1 className="text-xl font-bold">{profile.displayName || user.username}</h1>
+          {(badges.verified || badges.og || badges.premium) && (
+            <span className="inline-flex items-center gap-1">
+              {badges.verified && (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#3ba7ff" title="Verifiziert">
+                  <path d="M12 2l2.4 2.1 3.1-.5 1 3 2.9 1.4-.6 3.1 1.9 2.5-1.9 2.5.6 3.1-2.9 1.4-1 3-3.1-.5L12 22l-2.4-2.1-3.1.5-1-3-2.9-1.4.6-3.1L1.3 12l1.9-2.5-.6-3.1L5.5 5l1-3 3.1.5z" />
+                  <path d="M8.5 12l2.3 2.3L16 9" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+              {badges.og && (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#f59e0b" title="Early Adopter">
+                  <path d="M12 2l2.9 6.3L22 9l-5 5 1.3 7L12 17.8 5.7 21 7 14 2 9l7.1-.7z" />
+                </svg>
+              )}
+              {badges.premium && (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#ec4899" title="VIP / Premium">
+                  <path d="M3 8l4 3 5-6 5 6 4-3-2 11H5z" />
+                </svg>
+              )}
+            </span>
+          )}
+        </div>
         <p className="text-sm text-zinc-400">@{user.username}</p>
 
         {profile.bio && <p className="mt-3 text-sm text-zinc-300">{profile.bio}</p>}
@@ -105,6 +141,8 @@ export default async function ProfilePage({
 
         <p className="mt-6 text-xs text-zinc-500">{profile.views} Aufrufe</p>
       </div>
+
+      <ViewTracker profileId={profile.id} isOwner={isOwner} />
 
       {profile.audioUrl && (
         <AudioPlayer src={profile.audioUrl} autoplay={!!profile.audioAutoplay} />

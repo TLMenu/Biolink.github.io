@@ -8,7 +8,7 @@ export async function GET(
   const url = new URL(req.url);
   const host = req.headers.get("host") || "telelumi-github-io.vercel.app";
   const protocol = host.includes("localhost") ? "http" : "https";
-  const redirectUri = `${protocol}://${host}/api/auth/oauth/callback?provider=${provider}`;
+  const redirectUri = `${protocol}://${host}/api/auth/oauth/callback/${provider}`;
 
   if (provider === "github") {
     const clientId = process.env.GITHUB_CLIENT_ID;

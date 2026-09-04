@@ -1,29 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap");
 @import "tailwindcss";
 
 :root {
-  /* Ambient glass -- warm plum-black, quiet chrome. The user's own accent
-     color is the only thing that's meant to glow. */
-  --bg-base: #1a1420;
-  --bg-surface: #241c2c;
-  --bg-surface-2: #2d2436;
-
-  --text-primary: #e9e3ee;
-  --text-secondary: #8c7d99;
-  --text-muted: #6e6178;
-
-  --border: #342a3f;
-  --border-strong: #453a52;
-
-  --danger: #f2879a;
-  --success: #7fd9ae;
-
-  --font-voice: "Fraunces", Georgia, serif;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, Helvetica, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
-
-  --background: var(--bg-base);
-  --foreground: var(--text-primary);
+  --background: #0a0a0f;
+  --foreground: #f4f4f5;
 }
 
 @theme inline {
@@ -32,15 +11,9 @@
 }
 
 body {
-  background: var(--bg-base);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-}
-
-/* Glow -- the signature element. Applied only to the user's own accent
-   color (never to platform chrome), via inline style setting --glow-color. */
-.glow {
-  box-shadow: 0 0 0 1px var(--glow-color, transparent), 0 0 16px 1px color-mix(in srgb, var(--glow-color, transparent) 45%, transparent);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, Helvetica, sans-serif;
 }
 
 @keyframes fall {

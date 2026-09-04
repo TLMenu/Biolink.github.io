@@ -31,99 +31,52 @@ export default function LoginPage() {
   }
 
   return (
-    <main
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ background: "var(--bg-base)" }}
-    >
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0f] to-[#15152b] px-6">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-sm rounded-2xl p-8 space-y-5"
-        style={{ background: "var(--bg-surface)" }}
+        className="w-full max-w-sm bg-zinc-900/70 border border-zinc-800 rounded-xl p-8 space-y-4"
       >
-        <div>
-          <h1
-            className="text-2xl mb-1"
-            style={{
-              fontFamily: "var(--font-voice)",
-              fontWeight: 500,
-              color: "var(--text-primary)",
-            }}
-          >
-            Willkommen zurück
-          </h1>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            Melde dich bei deiner Seite an.
-          </p>
-        </div>
+        <h1 className="text-2xl font-bold mb-2">Login</h1>
 
         <div>
-          <label className="text-sm block mb-1.5" style={{ color: "var(--text-secondary)" }}>
-            E-Mail
-          </label>
+          <label className="text-sm text-zinc-400">E-Mail</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input"
+            className="mt-1 w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 outline-none focus:border-violet-500"
             required
           />
         </div>
 
         <div>
-          <label className="text-sm block mb-1.5" style={{ color: "var(--text-secondary)" }}>
-            Passwort
-          </label>
+          <label className="text-sm text-zinc-400">Passwort</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="input"
+            className="mt-1 w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 outline-none focus:border-violet-500"
             required
           />
         </div>
 
-        {error && (
-          <p className="text-sm" style={{ color: "var(--danger)" }}>
-            {error}
-          </p>
-        )}
+        {error && <p className="text-red-400 text-sm">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 rounded-lg font-medium transition disabled:opacity-50"
-          style={{ background: "var(--text-primary)", color: "var(--bg-base)" }}
+          className="w-full py-2.5 rounded-lg bg-violet-600 hover:bg-violet-500 transition font-medium disabled:opacity-50"
         >
-          {loading ? "Wird eingeloggt..." : "Weiter"}
+          {loading ? "Wird eingeloggt..." : "Login"}
         </button>
 
-        <p className="text-sm text-center" style={{ color: "var(--text-muted)" }}>
+        <p className="text-sm text-zinc-500 text-center">
           Noch keinen Account?{" "}
-          <Link href="/register" style={{ color: "var(--text-primary)" }} className="hover:underline">
+          <Link href="/register" className="text-violet-400 hover:underline">
             Registrieren
           </Link>
         </p>
       </form>
-
-      <style jsx global>{`
-        .input {
-          width: 100%;
-          border-radius: 0.5rem;
-          background: var(--bg-surface-2);
-          border: 1px solid var(--border);
-          padding: 0.6rem 0.8rem;
-          outline: none;
-          color: var(--text-primary);
-          font-size: 0.9rem;
-          transition: border-color 0.15s ease;
-        }
-        .input:focus {
-          border-color: var(--border-strong);
-        }
-        .input::placeholder {
-          color: var(--text-muted);
-        }
-      `}</style>
     </main>
   );
 }

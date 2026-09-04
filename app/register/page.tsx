@@ -32,90 +32,61 @@ export default function RegisterPage() {
   }
 
   return (
-    <main
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ background: "var(--bg-base)" }}
-    >
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0f] to-[#15152b] px-6">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-sm rounded-2xl p-8 space-y-5"
-        style={{ background: "var(--bg-surface)" }}
+        className="w-full max-w-sm bg-zinc-900/70 border border-zinc-800 rounded-xl p-8 space-y-4"
       >
-        <div>
-          <h1
-            className="text-2xl mb-1"
-            style={{
-              fontFamily: "var(--font-voice)",
-              fontWeight: 500,
-              color: "var(--text-primary)",
-            }}
-          >
-            Deine Seite beginnt hier
-          </h1>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            Ein Konto, eine eigene Adresse, volle Kontrolle.
-          </p>
-        </div>
+        <h1 className="text-2xl font-bold mb-2">Account erstellen</h1>
 
         <div>
-          <label className="text-sm block mb-1.5" style={{ color: "var(--text-secondary)" }}>
-            Username
-          </label>
+          <label className="text-sm text-zinc-400">Username</label>
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="input"
+            className="mt-1 w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 outline-none focus:border-violet-500"
             placeholder="deinname"
             required
           />
         </div>
 
         <div>
-          <label className="text-sm block mb-1.5" style={{ color: "var(--text-secondary)" }}>
-            E-Mail
-          </label>
+          <label className="text-sm text-zinc-400">E-Mail</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input"
+            className="mt-1 w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 outline-none focus:border-violet-500"
             placeholder="du@example.com"
             required
           />
         </div>
 
         <div>
-          <label className="text-sm block mb-1.5" style={{ color: "var(--text-secondary)" }}>
-            Passwort
-          </label>
+          <label className="text-sm text-zinc-400">Passwort</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="input"
+            className="mt-1 w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 outline-none focus:border-violet-500"
             placeholder="mind. 6 Zeichen"
             required
           />
         </div>
 
-        {error && (
-          <p className="text-sm" style={{ color: "var(--danger)" }}>
-            {error}
-          </p>
-        )}
+        {error && <p className="text-red-400 text-sm">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 rounded-lg font-medium transition disabled:opacity-50"
-          style={{ background: "var(--text-primary)", color: "var(--bg-base)" }}
+          className="w-full py-2.5 rounded-lg bg-violet-600 hover:bg-violet-500 transition font-medium disabled:opacity-50"
         >
-          {loading ? "Wird erstellt..." : "Konto erstellen"}
+          {loading ? "Wird erstellt..." : "Registrieren"}
         </button>
 
-        <p className="text-sm text-center" style={{ color: "var(--text-muted)" }}>
+        <p className="text-sm text-zinc-500 text-center">
           Schon einen Account?{" "}
-          <Link href="/login" style={{ color: "var(--text-primary)" }} className="hover:underline">
+          <Link href="/login" className="text-violet-400 hover:underline">
             Login
           </Link>
         </p>

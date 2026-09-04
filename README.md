@@ -7,47 +7,29 @@ und Links unter `deinedomain.de/username`.
 ## Tech-Stack
 
 - **Next.js 16** (App Router) + TypeScript + Tailwind CSS
-- **libSQL / Turso** (`@libsql/client`) — SQLite-kompatible Datenbank.
-  Lokal läuft sie einfach als Datei (`data/app.db`), in Produktion (z.B. auf
-  Vercel) verbindet sie sich zu einer gehosteten Turso-Datenbank — nötig,
-  weil serverlose Plattformen wie Vercel kein dauerhaft beschreibbares
-  Dateisystem haben.
+- **node:sqlite** — Node's eingebautes SQLite-Modul (kein externer DB-Server,
+  keine native Binary nötig). Erfordert Node.js **22.5+**.
 - Eigenes Auth-System: bcrypt-Passwort-Hashing + JWT-Session-Cookie (httpOnly)
 
-## Lokales Setup
+## Setup
 
 ```bash
 npm install
 npm run dev
 ```
 
-Ohne weitere Konfiguration läuft die App unter `http://localhost:3000` und
-legt automatisch eine lokale SQLite-Datei unter `data/app.db` an.
+Die Seite läuft dann unter `http://localhost:3000`.
 
-## Live-Deploy auf Vercel
+Beim ersten Start wird automatisch eine SQLite-Datenbank unter `data/app.db`
+angelegt — es ist kein zusätzliches Datenbank-Setup nötig.
 
-Serverlose Plattformen wie Vercel haben **kein dauerhaft beschreibbares
-Dateisystem** — deshalb braucht die App dort eine gehostete Datenbank statt
-der lokalen SQLite-Datei. Wir nutzen dafür **Turso** (kostenloser Tier,
-SQLite-kompatibel):
+## Wichtig vor dem Live-Gang
 
-1. Auf [turso.tech](https://turso.tech) registrieren (oder die Turso-CLI
-   nutzen: `curl -sSfL https://get.tur.so/install.sh | bash`)
-2. Datenbank erstellen: `turso db create biolink`
-3. Verbindungsdaten holen:
-   - `turso db show biolink --url` → das ist `TURSO_DATABASE_URL`
-   - `turso db tokens create biolink` → das ist `TURSO_AUTH_TOKEN`
-4. In den Vercel-Projekteinstellungen unter **Environment Variables**
-   hinzufügen:
-   - `TURSO_DATABASE_URL`
-   - `TURSO_AUTH_TOKEN`
-   - `JWT_SECRET` (ein langer, zufälliger Wert, z.B. mit `openssl rand -hex 32`)
-5. Neu deployen (Redeploy in Vercel) — danach funktionieren Registrierung,
-   Login und das Dashboard live und dauerhaft.
-
-Ohne `TURSO_DATABASE_URL` fällt die App automatisch auf eine lokale
-SQLite-Datei zurück — praktisch für lokale Entwicklung, aber **nicht**
-für den Vercel-Live-Betrieb geeignet.
+1. **`.env` anpassen**: Ändere `JWT_SECRET` auf einen langen, zufälligen
+   Wert (z.B. mit `openssl rand -hex 32` generieren). Der aktuelle Wert ist
+   nur ein Platzhalter für die lokale Entwicklung.
+2. **`data/app.db` sichern**: Regelmäßige Backups der SQLite-Datei einplanen.
+3. Für Produktion: `npm run build && npm run start`.
 
 ## Projektstruktur
 
@@ -62,12 +44,12 @@ app/
     me                  Aktuell eingeloggter Nutzer + Profil
     profile             Profil & Links aktualisieren (PUT)
 lib/
-  db.ts                  libSQL-Verbindung + Tabellen-Setup
-  models.ts              DB-Zugriffsfunktionen (Users, Profiles, Links)
-  auth.ts                Passwort-Hashing, JWT, Session-Cookie
+  db.ts                 SQLite-Verbindung + Tabellen-Setup
+  models.ts             DB-Zugriffsfunktionen (Users, Profiles, Links)
+  auth.ts               Passwort-Hashing, JWT, Session-Cookie
 components/
   ParticleEffect.tsx     Schnee-/Sterne-/Funken-Effekt auf Profilseiten
-  AudioPlayer.tsx         Hintergrundmusik-Player mit Play/Pause-Button
+  AudioPlayer.tsx        Hintergrundmusik-Player mit Play/Pause-Button
 middleware.ts             Schützt /dashboard (Redirect zu /login ohne Session)
 ```
 

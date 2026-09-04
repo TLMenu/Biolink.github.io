@@ -26,7 +26,7 @@ const emptyProfile: ProfileData = {
   backgroundUrl: "",
   backgroundType: "color",
   backgroundColor: "#0f0f0f",
-  accentColor: "#f472b6",
+  accentColor: "#7c3aed",
   audioUrl: "",
   audioAutoplay: false,
   cursorEffect: "none",
@@ -59,7 +59,7 @@ export default function DashboardPage() {
             backgroundUrl: data.profile.backgroundUrl ?? "",
             backgroundType: data.profile.backgroundType ?? "color",
             backgroundColor: data.profile.backgroundColor ?? "#0f0f0f",
-            accentColor: data.profile.accentColor ?? "#f472b6",
+            accentColor: data.profile.accentColor ?? "#7c3aed",
             audioUrl: data.profile.audioUrl ?? "",
             audioAutoplay: !!data.profile.audioAutoplay,
             cursorEffect: data.profile.cursorEffect ?? "none",
@@ -120,358 +120,235 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <main
-        className="min-h-screen flex items-center justify-center"
-        style={{ background: "var(--bg-base)", color: "var(--text-muted)" }}
-      >
+      <main className="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-zinc-400">
         Lädt...
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
-      <header
-        className="px-6 py-4 flex items-center justify-between sticky top-0 z-10"
-        style={{
-          borderBottom: "1px solid var(--border)",
-          background: "color-mix(in srgb, var(--bg-base) 90%, transparent)",
-          backdropFilter: "blur(8px)",
-        }}
-      >
+    <main className="min-h-screen bg-[#0a0a0f] text-zinc-100">
+      <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between sticky top-0 bg-[#0a0a0f]/90 backdrop-blur z-10">
         <div>
-          <h1 style={{ fontFamily: "var(--font-voice)", fontWeight: 500, fontSize: "1.15rem" }}>
-            Dein Profil
-          </h1>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+          <h1 className="font-bold text-lg">Dashboard</h1>
+          <p className="text-sm text-zinc-500">
             Deine Seite:{" "}
             <a
               href={`/${username}`}
               target="_blank"
-              className="hover:underline"
-              style={{ color: "var(--text-secondary)" }}
+              className="text-violet-400 hover:underline"
             >
               /{username}
             </a>
           </p>
         </div>
         <div className="flex gap-3 items-center">
-          {saved && (
-            <span className="text-sm" style={{ color: "var(--success)" }}>
-              Gespeichert ✓
-            </span>
-          )}
+          {saved && <span className="text-sm text-green-400">Gespeichert ✓</span>}
           <button
             onClick={save}
             disabled={saving}
-            className="glow px-4 py-2 rounded-lg text-sm font-medium transition disabled:opacity-50"
-            style={
-              {
-                background: profile.accentColor,
-                color: "var(--bg-base)",
-                "--glow-color": profile.accentColor,
-              } as React.CSSProperties
-            }
+            className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 transition text-sm font-medium disabled:opacity-50"
           >
             {saving ? "Speichert..." : "Speichern"}
           </button>
           <button
             onClick={logout}
-            className="px-4 py-2 rounded-lg text-sm transition"
-            style={{ border: "1px solid var(--border-strong)", color: "var(--text-secondary)" }}
+            className="px-4 py-2 rounded-lg border border-zinc-700 hover:border-zinc-500 transition text-sm"
           >
             Logout
           </button>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10">
-        {/* Editor column */}
-        <div className="space-y-10">
-          <section className="space-y-4">
-            <SectionLabel>Profil</SectionLabel>
-            <Field label="Anzeigename">
+      <div className="max-w-3xl mx-auto px-6 py-8 space-y-10">
+        {/* Profil */}
+        <section className="space-y-4">
+          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
+            Profil
+          </h2>
+          <Field label="Anzeigename">
+            <input
+              className="input"
+              value={profile.displayName}
+              onChange={(e) => updateField("displayName", e.target.value)}
+            />
+          </Field>
+          <Field label="Bio">
+            <textarea
+              className="input min-h-20"
+              value={profile.bio}
+              onChange={(e) => updateField("bio", e.target.value)}
+            />
+          </Field>
+          <Field label="Avatar-URL">
+            <input
+              className="input"
+              placeholder="https://..."
+              value={profile.avatarUrl}
+              onChange={(e) => updateField("avatarUrl", e.target.value)}
+            />
+          </Field>
+        </section>
+
+        {/* Design */}
+        <section className="space-y-4">
+          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
+            Hintergrund & Farben
+          </h2>
+          <Field label="Hintergrund-Typ">
+            <select
+              className="input"
+              value={profile.backgroundType}
+              onChange={(e) => updateField("backgroundType", e.target.value)}
+            >
+              <option value="color">Farbe</option>
+              <option value="image">Bild</option>
+              <option value="video">Video</option>
+              <option value="gif">GIF</option>
+            </select>
+          </Field>
+          {profile.backgroundType === "color" ? (
+            <Field label="Hintergrundfarbe">
               <input
-                className="input"
-                value={profile.displayName}
-                onChange={(e) => updateField("displayName", e.target.value)}
+                type="color"
+                className="h-10 w-20 rounded bg-transparent"
+                value={profile.backgroundColor}
+                onChange={(e) => updateField("backgroundColor", e.target.value)}
               />
             </Field>
-            <Field label="Bio">
-              <textarea
-                className="input min-h-20"
-                value={profile.bio}
-                onChange={(e) => updateField("bio", e.target.value)}
-              />
-            </Field>
-            <Field label="Avatar-URL">
+          ) : (
+            <Field label="Hintergrund-URL">
               <input
                 className="input"
                 placeholder="https://..."
-                value={profile.avatarUrl}
-                onChange={(e) => updateField("avatarUrl", e.target.value)}
+                value={profile.backgroundUrl}
+                onChange={(e) => updateField("backgroundUrl", e.target.value)}
               />
             </Field>
-          </section>
-
-          <section className="space-y-4">
-            <SectionLabel>Hintergrund & Farben</SectionLabel>
-            <Field label="Hintergrund-Typ">
-              <select
-                className="input"
-                value={profile.backgroundType}
-                onChange={(e) => updateField("backgroundType", e.target.value)}
-              >
-                <option value="color">Farbe</option>
-                <option value="image">Bild</option>
-                <option value="video">Video</option>
-                <option value="gif">GIF</option>
-              </select>
-            </Field>
-            {profile.backgroundType === "color" ? (
-              <Field label="Hintergrundfarbe">
-                <ColorField
-                  value={profile.backgroundColor}
-                  onChange={(v) => updateField("backgroundColor", v)}
-                />
-              </Field>
-            ) : (
-              <Field label="Hintergrund-URL">
-                <input
-                  className="input"
-                  placeholder="https://..."
-                  value={profile.backgroundUrl}
-                  onChange={(e) => updateField("backgroundUrl", e.target.value)}
-                />
-              </Field>
-            )}
-            <Field label="Deine Farbe">
-              <ColorField
-                value={profile.accentColor}
-                onChange={(v) => updateField("accentColor", v)}
-                glow
-              />
-            </Field>
-            <Field label="Cursor / Partikel-Effekt">
-              <select
-                className="input"
-                value={profile.cursorEffect}
-                onChange={(e) => updateField("cursorEffect", e.target.value)}
-              >
-                <option value="none">Kein Effekt</option>
-                <option value="snow">Schnee</option>
-                <option value="stars">Sterne</option>
-                <option value="sparkles">Funken</option>
-              </select>
-            </Field>
-            <Field label="Custom CSS (Profis)">
-              <textarea
-                className="input min-h-24"
-                style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}
-                placeholder=".profile-card { ... }"
-                value={profile.customCss}
-                onChange={(e) => updateField("customCss", e.target.value)}
-              />
-            </Field>
-          </section>
-
-          <section className="space-y-4">
-            <SectionLabel>Musik</SectionLabel>
-            <Field label="Audio-URL (mp3)">
-              <input
-                className="input"
-                placeholder="https://.../song.mp3"
-                value={profile.audioUrl}
-                onChange={(e) => updateField("audioUrl", e.target.value)}
-              />
-            </Field>
-            <label className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-              <input
-                type="checkbox"
-                checked={profile.audioAutoplay}
-                onChange={(e) => updateField("audioAutoplay", e.target.checked)}
-              />
-              Automatisch abspielen
-            </label>
-          </section>
-
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <SectionLabel>Links</SectionLabel>
-              <button
-                onClick={addLink}
-                className="text-sm px-3 py-1.5 rounded-lg transition"
-                style={{ border: "1px solid var(--border-strong)", color: "var(--text-secondary)" }}
-              >
-                + Link hinzufügen
-              </button>
-            </div>
-            <div className="space-y-3">
-              {links.map((link, i) => (
-                <div
-                  key={i}
-                  className="flex gap-2 items-center rounded-lg p-3"
-                  style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
-                >
-                  <input
-                    className="input flex-1"
-                    placeholder="Label (z.B. Discord)"
-                    value={link.label}
-                    onChange={(e) => updateLink(i, "label", e.target.value)}
-                  />
-                  <input
-                    className="input flex-[2]"
-                    placeholder="https://..."
-                    value={link.url}
-                    onChange={(e) => updateLink(i, "url", e.target.value)}
-                  />
-                  <button
-                    onClick={() => removeLink(i)}
-                    className="px-2 transition"
-                    style={{ color: "var(--danger)" }}
-                    aria-label="Entfernen"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-              {links.length === 0 && (
-                <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  Noch keine Links hinzugefügt.
-                </p>
-              )}
-            </div>
-          </section>
-        </div>
-
-        {/* Live preview column */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
-          <p
-            className="text-xs uppercase tracking-[0.15em] mb-3"
-            style={{ color: "var(--text-muted)" }}
-          >
-            Vorschau
-          </p>
-          <div
-            className="rounded-2xl p-6 flex flex-col items-center text-center"
-            style={{
-              background:
-                profile.backgroundType === "color" ? profile.backgroundColor : "var(--bg-surface)",
-              border: "1px solid var(--border)",
-              minHeight: "420px",
-            }}
-          >
-            <div
-              className="glow w-16 h-16 rounded-full mb-4 flex items-center justify-center overflow-hidden"
-              style={
-                {
-                  background: "var(--bg-surface-2)",
-                  "--glow-color": profile.accentColor,
-                } as React.CSSProperties
-              }
+          )}
+          <Field label="Akzentfarbe">
+            <input
+              type="color"
+              className="h-10 w-20 rounded bg-transparent"
+              value={profile.accentColor}
+              onChange={(e) => updateField("accentColor", e.target.value)}
+            />
+          </Field>
+          <Field label="Cursor / Partikel-Effekt">
+            <select
+              className="input"
+              value={profile.cursorEffect}
+              onChange={(e) => updateField("cursorEffect", e.target.value)}
             >
-              {profile.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <span style={{ color: "var(--text-muted)", fontSize: "1.5rem" }}>?</span>
-              )}
-            </div>
-            <p style={{ fontFamily: "var(--font-voice)", fontWeight: 500, fontSize: "1.1rem" }}>
-              {profile.displayName || username || "dein name"}
-            </p>
-            <p className="text-sm mt-1 mb-4" style={{ color: "var(--text-secondary)" }}>
-              {profile.bio || "deine bio erscheint hier"}
-            </p>
-            <div className="flex flex-col gap-2 w-full">
-              {(links.length > 0 ? links : [{ label: "dein link", url: "" }]).map((l, i) => (
-                <div
-                  key={i}
-                  className="text-sm rounded-lg py-2 px-3"
-                  style={{
-                    border: `1px solid ${profile.accentColor}`,
-                    color: profile.accentColor,
-                  }}
-                >
-                  {l.label || "link"}
-                </div>
-              ))}
-            </div>
+              <option value="none">Kein Effekt</option>
+              <option value="snow">Schnee</option>
+              <option value="stars">Sterne</option>
+              <option value="sparkles">Funken</option>
+            </select>
+          </Field>
+          <Field label="Custom CSS (Profis)">
+            <textarea
+              className="input min-h-24 font-mono text-xs"
+              placeholder=".profile-card { ... }"
+              value={profile.customCss}
+              onChange={(e) => updateField("customCss", e.target.value)}
+            />
+          </Field>
+        </section>
+
+        {/* Audio */}
+        <section className="space-y-4">
+          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
+            Musik
+          </h2>
+          <Field label="Audio-URL (mp3)">
+            <input
+              className="input"
+              placeholder="https://.../song.mp3"
+              value={profile.audioUrl}
+              onChange={(e) => updateField("audioUrl", e.target.value)}
+            />
+          </Field>
+          <label className="flex items-center gap-2 text-sm text-zinc-400">
+            <input
+              type="checkbox"
+              checked={profile.audioAutoplay}
+              onChange={(e) => updateField("audioAutoplay", e.target.checked)}
+            />
+            Automatisch abspielen
+          </label>
+        </section>
+
+        {/* Links */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
+              Links
+            </h2>
+            <button
+              onClick={addLink}
+              className="text-sm px-3 py-1.5 rounded-lg border border-zinc-700 hover:border-zinc-500"
+            >
+              + Link hinzufügen
+            </button>
           </div>
-        </div>
+          <div className="space-y-3">
+            {links.map((link, i) => (
+              <div
+                key={i}
+                className="flex gap-2 items-center bg-zinc-900/50 border border-zinc-800 rounded-lg p-3"
+              >
+                <input
+                  className="input flex-1"
+                  placeholder="Label (z.B. Discord)"
+                  value={link.label}
+                  onChange={(e) => updateLink(i, "label", e.target.value)}
+                />
+                <input
+                  className="input flex-[2]"
+                  placeholder="https://..."
+                  value={link.url}
+                  onChange={(e) => updateLink(i, "url", e.target.value)}
+                />
+                <button
+                  onClick={() => removeLink(i)}
+                  className="text-red-400 hover:text-red-300 px-2"
+                  aria-label="Entfernen"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            {links.length === 0 && (
+              <p className="text-sm text-zinc-500">Noch keine Links hinzugefügt.</p>
+            )}
+          </div>
+        </section>
       </div>
 
       <style jsx global>{`
         .input {
           width: 100%;
           border-radius: 0.5rem;
-          background: var(--bg-surface-2);
-          border: 1px solid var(--border);
+          background: rgb(39 39 42 / 0.7);
+          border: 1px solid rgb(63 63 70);
           padding: 0.55rem 0.75rem;
           outline: none;
-          color: var(--text-primary);
-          font-size: 0.9rem;
-          transition: border-color 0.15s ease;
+          color: white;
         }
         .input:focus {
-          border-color: var(--border-strong);
-        }
-        .input::placeholder {
-          color: var(--text-muted);
+          border-color: #7c3aed;
         }
       `}</style>
     </main>
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <h2
-      className="text-xs font-semibold uppercase tracking-wider"
-      style={{ color: "var(--text-muted)" }}
-    >
-      {children}
-    </h2>
-  );
-}
-
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-sm block mb-1.5" style={{ color: "var(--text-secondary)" }}>
-        {label}
-      </label>
+      <label className="text-sm text-zinc-400 block mb-1">{label}</label>
       {children}
-    </div>
-  );
-}
-
-function ColorField({
-  value,
-  onChange,
-  glow,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  glow?: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <div
-        className={glow ? "glow rounded-lg" : "rounded-lg"}
-        style={{ ...(glow ? ({ "--glow-color": value } as React.CSSProperties) : {}) }}
-      >
-        <input
-          type="color"
-          className="h-10 w-16 rounded-lg cursor-pointer"
-          style={{ background: "transparent", border: "1px solid var(--border)" }}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      </div>
-      <span className="text-sm" style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
-        {value}
-      </span>
     </div>
   );
 }

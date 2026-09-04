@@ -8,20 +8,22 @@ import {
 import ParticleEffect from "@/components/ParticleEffect";
 import AudioPlayer from "@/components/AudioPlayer";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProfilePage({
   params,
 }: {
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
-  const user = getUserByUsername(username);
+  const user = await getUserByUsername(username);
   if (!user) notFound();
 
-  const profile = getProfileByUserId(user.id);
+  const profile = await getProfileByUserId(user.id);
   if (!profile) notFound();
 
-  const links = getLinksByProfileId(profile.id);
-  incrementProfileViews(profile.id);
+  const links = await getLinksByProfileId(profile.id);
+  await incrementProfileViews(profile.id);
 
   const bgStyle: React.CSSProperties =
     profile.backgroundType === "color"

@@ -124,7 +124,12 @@ export default function AuthForm({ initialMode }: { initialMode: "login" | "regi
       <aside className="auth-brand-panel">
         <div className="auth-brand-top">
           <Link href="/" className="auth-mark">
-            <span className="auth-mark-glyph">TL</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://raw.githubusercontent.com/TLMenu/Biolink.github.io/refs/heads/main/Icons/BioLink-Icon.png"
+              alt=""
+              className="auth-mark-glyph"
+            />
             Biolink
           </Link>
         </div>

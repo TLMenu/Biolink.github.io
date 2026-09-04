@@ -85,12 +85,8 @@
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--violet), var(--cyan));
-  display: grid;
-  place-items: center;
-  font-size: 15px;
-  color: #0A0E17;
-  font-weight: 700;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .auth-brand-headline {

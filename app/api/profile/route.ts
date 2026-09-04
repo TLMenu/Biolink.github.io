@@ -26,7 +26,7 @@ export async function PUT(req: NextRequest) {
     links,
   } = body;
 
-  updateProfile(userId, {
+  await updateProfile(userId, {
     displayName,
     bio,
     avatarUrl,
@@ -40,9 +40,9 @@ export async function PUT(req: NextRequest) {
     customCss,
   });
 
-  const profile = getProfileByUserId(userId);
+  const profile = await getProfileByUserId(userId);
   if (profile && Array.isArray(links)) {
-    replaceLinks(
+    await replaceLinks(
       profile.id,
       links
         .filter((l: { label?: string; url?: string }) => l.label && l.url)

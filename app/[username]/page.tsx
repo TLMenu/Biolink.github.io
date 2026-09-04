@@ -102,20 +102,26 @@ export default async function ProfilePage({
           {(badges.verified || badges.og || badges.premium) && (
             <span className="inline-flex items-center gap-1">
               {badges.verified && (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#3ba7ff" title="Verifiziert">
-                  <path d="M12 2l2.4 2.1 3.1-.5 1 3 2.9 1.4-.6 3.1 1.9 2.5-1.9 2.5.6 3.1-2.9 1.4-1 3-3.1-.5L12 22l-2.4-2.1-3.1.5-1-3-2.9-1.4.6-3.1L1.3 12l1.9-2.5-.6-3.1L5.5 5l1-3 3.1.5z" />
-                  <path d="M8.5 12l2.3 2.3L16 9" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <span title="Verifiziert" className="inline-flex items-center">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#3ba7ff">
+                    <path d="M12 2l2.4 2.1 3.1-.5 1 3 2.9 1.4-.6 3.1 1.9 2.5-1.9 2.5.6 3.1-2.9 1.4-1 3-3.1-.5L12 22l-2.4-2.1-3.1.5-1-3-2.9-1.4.6-3.1L1.3 12l1.9-2.5-.6-3.1L5.5 5l1-3 3.1.5z" />
+                    <path d="M8.5 12l2.3 2.3L16 9" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
               )}
               {badges.og && (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#f59e0b" title="Early Adopter">
-                  <path d="M12 2l2.9 6.3L22 9l-5 5 1.3 7L12 17.8 5.7 21 7 14 2 9l7.1-.7z" />
-                </svg>
+                <span title="Early Adopter" className="inline-flex items-center">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#f59e0b">
+                    <path d="M12 2l2.9 6.3L22 9l-5 5 1.3 7L12 17.8 5.7 21 7 14 2 9l7.1-.7z" />
+                  </svg>
+                </span>
               )}
               {badges.premium && (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#ec4899" title="VIP / Premium">
-                  <path d="M3 8l4 3 5-6 5 6 4-3-2 11H5z" />
-                </svg>
+                <span title="VIP / Premium" className="inline-flex items-center">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#ec4899">
+                    <path d="M3 8l4 3 5-6 5 6 4-3-2 11H5z" />
+                  </svg>
+                </span>
               )}
             </span>
           )}
